@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, database } from '../firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { ref, set, get } from 'firebase/database';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -12,14 +13,44 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  useEffect(() => {
+    const initializeUsers = async () => {
+      const adminRef = ref(database, 'users/admin@example.com');
+      const studentRef = ref(database, 'users/student@example.com');
+
+      const adminSnapshot = await get(adminRef);
+      const studentSnapshot = await get(studentRef);
+
+      if (!adminSnapshot.exists()) {
+        await createUserWithEmailAndPassword(auth, 'admin@example.com', 'adminpassword');
+        await set(adminRef, { role: 'admin' });
+      }
+
+      if (!studentSnapshot.exists()) {
+        await createUserWithEmailAndPassword(auth, 'student@example.com', 'studentpassword');
+        await set(studentRef, { role: 'student' });
+      }
+    };
+
+    initializeUsers();
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      const userRef = ref(database, `users/${email.replace('.', ',')}`);
+      const userSnapshot = await get(userRef);
+      const userRole = userSnapshot.val().role;
+
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
-        description: `ยินดีต้อนรับ ${email}`,
+        description: `ยินดีต้อนรับ ${email} (${userRole})`,
       });
+
+      localStorage.setItem('user', email);
+      localStorage.setItem('role', userRole);
+
       navigate('/');
     } catch (error) {
       toast({
@@ -53,6 +84,10 @@ const Login = () => {
           />
           <Button type="submit" className="w-full mb-4">เข้าสู่ระบบ</Button>
         </form>
+        <div className="text-sm text-gray-600">
+          <p>แอดมิน: admin@example.com / adminpassword</p>
+          <p>นักเรียน: student@example.com / studentpassword</p>
+        </div>
       </div>
     </div>
   );
