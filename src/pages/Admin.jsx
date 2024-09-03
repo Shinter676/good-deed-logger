@@ -14,6 +14,9 @@ const Admin = () => {
     if (user !== 'admin') {
       navigate('/');
     }
+    // Load pending submissions from localStorage
+    const storedPendingSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions') || '[]');
+    setPendingSubmissions(storedPendingSubmissions);
   }, [navigate]);
 
   const handleScoreChange = (id, score) => {
@@ -28,7 +31,10 @@ const Admin = () => {
     const updatedReviewed = [...existingReviewed, ...reviewedSubmissions];
     localStorage.setItem('reviewedSubmissions', JSON.stringify(updatedReviewed));
 
-    setPendingSubmissions(pendingSubmissions.filter(sub => sub.score === 0));
+    const remainingPending = pendingSubmissions.filter(sub => sub.score === 0);
+    setPendingSubmissions(remainingPending);
+    localStorage.setItem('pendingSubmissions', JSON.stringify(remainingPending));
+
     toast({
       title: "บันทึกคะแนนสำเร็จ",
       description: "คะแนนถูกบันทึกและย้ายไปยังภาพที่ตรวจแล้ว",

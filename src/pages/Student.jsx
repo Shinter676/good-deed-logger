@@ -17,6 +17,9 @@ const Student = () => {
     if (!user || user === 'admin') {
       navigate('/');
     }
+    // Load pending submissions from localStorage
+    const storedPendingSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions') || '[]');
+    setPendingSubmissions(storedPendingSubmissions.filter(sub => sub.studentName === user));
   }, [navigate]);
 
   const handleImageUpload = (e) => {
@@ -32,13 +35,22 @@ const Student = () => {
 
   const handleSubmit = () => {
     if (image && description) {
+      const user = localStorage.getItem('user');
       const newSubmission = {
         id: Date.now(),
+        studentName: user,
         image,
         description,
-        date: new Date().toLocaleDateString()
+        date: new Date().toLocaleDateString(),
+        score: 0
       };
-      setPendingSubmissions([...pendingSubmissions, newSubmission]);
+      const updatedPendingSubmissions = [...pendingSubmissions, newSubmission];
+      setPendingSubmissions(updatedPendingSubmissions);
+      
+      // Update localStorage
+      const allPendingSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions') || '[]');
+      localStorage.setItem('pendingSubmissions', JSON.stringify([...allPendingSubmissions, newSubmission]));
+
       toast({
         title: "อัพโหลดสำเร็จ",
         description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
