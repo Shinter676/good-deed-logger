@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Admin = () => {
   const [pendingSubmissions, setPendingSubmissions] = useState([
@@ -43,47 +44,59 @@ const Admin = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">หน้าแอดมิน - ตรวจคะแนน</h2>
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-4">รอการตรวจ</h3>
-        {pendingSubmissions.map((submission) => (
-          <div key={submission.id} className="mb-6 p-4 border rounded">
-            <h4 className="text-lg font-semibold mb-2">{submission.studentName}</h4>
-            <img src={submission.image} alt="Submission" className="mb-2 max-w-sm h-auto rounded" />
-            <p className="mb-2">{submission.description}</p>
-            <div className="flex items-center">
-              <Input
-                type="number"
-                value={submission.score}
-                onChange={(e) => handleScoreChange(submission.id, e.target.value)}
-                className="w-20 mr-2"
-                min="0"
-                max="100"
-              />
-              <span>คะแนน</span>
+    <div className="flex">
+      <div className="w-2/3 pr-4">
+        <h2 className="text-2xl font-bold mb-6">หน้าแอดมิน - ตรวจคะแนน</h2>
+        <div className="mb-8">
+          <h3 className="text-xl font-semibold mb-4">รอการตรวจ</h3>
+          {pendingSubmissions.map((submission) => (
+            <div key={submission.id} className="mb-6 p-4 border rounded">
+              <h4 className="text-lg font-semibold mb-2">{submission.studentName}</h4>
+              <img src={submission.image} alt="Submission" className="mb-2 max-w-sm h-auto rounded" />
+              <p className="mb-2">{submission.description}</p>
+              <div className="flex items-center">
+                <Input
+                  type="number"
+                  value={submission.score}
+                  onChange={(e) => handleScoreChange(submission.id, e.target.value)}
+                  className="w-20 mr-2"
+                  min="0"
+                  max="100"
+                />
+                <span>คะแนน</span>
+              </div>
             </div>
-          </div>
-        ))}
-        {pendingSubmissions.length > 0 && (
-          <Button onClick={handleSubmitScores}>บันทึกคะแนน</Button>
-        )}
+          ))}
+          {pendingSubmissions.length > 0 && (
+            <Button onClick={handleSubmitScores}>บันทึกคะแนน</Button>
+          )}
+        </div>
       </div>
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-4">ตรวจแล้ว</h3>
-        {reviewedSubmissions.map((submission) => (
-          <div key={submission.id} className="mb-6 p-4 border rounded">
-            <h4 className="text-lg font-semibold mb-2">{submission.studentName}</h4>
-            <img src={submission.image} alt="Submission" className="mb-2 max-w-sm h-auto rounded" />
-            <p className="mb-2">{submission.description}</p>
-            <p>คะแนน: {submission.score}</p>
-            <p>วันที่ตรวจ: {submission.reviewDate}</p>
-          </div>
-        ))}
-      </div>
-      <div>
-        <h3 className="text-xl font-semibold mb-2">คะแนนรวม</h3>
-        <p className="text-2xl font-bold">{totalScore} คะแนน</p>
+      <div className="w-1/3 pl-4">
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>คะแนนรวม</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold">{totalScore} คะแนน</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>ตรวจแล้ว</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {reviewedSubmissions.map((submission) => (
+              <div key={submission.id} className="mb-4 p-2 border-b">
+                <h4 className="font-semibold">{submission.studentName}</h4>
+                <img src={submission.image} alt="Submission" className="my-2 max-w-full h-auto rounded" />
+                <p className="text-sm">{submission.description}</p>
+                <p className="text-sm">คะแนน: {submission.score}</p>
+                <p className="text-xs text-gray-500">วันที่ตรวจ: {submission.reviewDate}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
