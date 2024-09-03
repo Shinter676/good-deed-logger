@@ -5,10 +5,22 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 import { navItems } from "./nav-items";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
+import { auth } from './firebase';
+import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -22,7 +34,7 @@ const App = () => {
                   key={to}
                   path={to}
                   element={
-                    <RequireAuth>
+                    <RequireAuth user={user}>
                       {page}
                     </RequireAuth>
                   }
@@ -37,16 +49,15 @@ const App = () => {
   );
 };
 
-const RequireAuth = ({ children }) => {
-  const user = localStorage.getItem('user');
+const RequireAuth = ({ children, user }) => {
   const location = useLocation();
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if ((location.pathname === '/admin' && user !== 'admin') || 
-      (location.pathname === '/student' && user === 'admin')) {
+  if ((location.pathname === '/admin' && user.email !== 'admin@example.com') || 
+      (location.pathname === '/student' && user.email === 'admin@example.com')) {
     return <Navigate to="/" replace />;
   }
 

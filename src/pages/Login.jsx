@@ -3,36 +3,28 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const validCredentials = [
-    { username: 'admin', password: '123', role: 'admin' },
-    { username: 'student1', password: 'student123', role: 'student' },
-    { username: 'student2', password: 'student456', role: 'student' },
-  ];
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const user = validCredentials.find(
-      (cred) => cred.username === username && cred.password === password
-    );
-
-    if (user) {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
-        description: `ยินดีต้อนรับ ${username}`,
+        description: `ยินดีต้อนรับ ${email}`,
       });
-      localStorage.setItem('user', user.role);
-      navigate(user.role === 'admin' ? '/admin' : '/student');
-    } else {
+      navigate('/');
+    } catch (error) {
       toast({
         title: "เข้าสู่ระบบไม่สำเร็จ",
-        description: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
+        description: error.message,
         variant: "destructive",
       });
     }
@@ -44,10 +36,10 @@ const Login = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">เข้าสู่ระบบ</h2>
         <form onSubmit={handleLogin}>
           <Input
-            type="text"
-            placeholder="ชื่อผู้ใช้"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            placeholder="อีเมล"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="mb-4"
             required
           />
@@ -61,14 +53,6 @@ const Login = () => {
           />
           <Button type="submit" className="w-full mb-4">เข้าสู่ระบบ</Button>
         </form>
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">รายชื่อผู้ใช้และรหัสผ่านที่ใช้ได้:</h3>
-          <ul className="list-disc pl-5">
-            <li>ชื่อผู้ใช้: admin, รหัสผ่าน: 123</li>
-            <li>ชื่อผู้ใช้: student1, รหัสผ่าน: student123</li>
-            <li>ชื่อผู้ใช้: student2, รหัสผ่าน: student456</li>
-          </ul>
-        </div>
       </div>
     </div>
   );
