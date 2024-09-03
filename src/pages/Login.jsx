@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -12,28 +10,26 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        localStorage.setItem('user', user.email === 'admin@example.com' ? 'admin' : 'student');
-        navigate(user.email === 'admin@example.com' ? '/admin' : '/student');
-      }
-    });
+  const validCredentials = [
+    { username: 'admin', password: '123', role: 'admin' },
+    { username: 'student1', password: 'student123', role: 'student' },
+    { username: 'student2', password: 'student456', role: 'student' },
+  ];
 
-    return () => unsubscribe();
-  }, [navigate]);
-
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, username, password);
+    const user = validCredentials.find(
+      (cred) => cred.username === username && cred.password === password
+    );
+
+    if (user) {
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
         description: `ยินดีต้อนรับ ${username}`,
       });
-      localStorage.setItem('user', userCredential.user.email === 'admin@example.com' ? 'admin' : 'student');
-    } catch (error) {
-      console.error("Authentication error:", error);
+      localStorage.setItem('user', user.role);
+      navigate(user.role === 'admin' ? '/admin' : '/student');
+    } else {
       toast({
         title: "เข้าสู่ระบบไม่สำเร็จ",
         description: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
@@ -49,7 +45,7 @@ const Login = () => {
         <form onSubmit={handleLogin}>
           <Input
             type="text"
-            placeholder="อีเมล"
+            placeholder="ชื่อผู้ใช้"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="mb-4"
@@ -68,9 +64,9 @@ const Login = () => {
         <div className="mt-4">
           <h3 className="text-lg font-semibold mb-2">รายชื่อผู้ใช้และรหัสผ่านที่ใช้ได้:</h3>
           <ul className="list-disc pl-5">
-            <li>อีเมล: admin@example.com, รหัสผ่าน: admin123</li>
-            <li>อีเมล: student1@example.com, รหัสผ่าน: student123</li>
-            <li>อีเมล: student2@example.com, รหัสผ่าน: student456</li>
+            <li>ชื่อผู้ใช้: admin, รหัสผ่าน: 123</li>
+            <li>ชื่อผู้ใช้: student1, รหัสผ่าน: student123</li>
+            <li>ชื่อผู้ใช้: student2, รหัสผ่าน: student456</li>
           </ul>
         </div>
       </div>
