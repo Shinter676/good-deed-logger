@@ -9,6 +9,8 @@ const Student = () => {
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState('');
   const [pendingSubmissions, setPendingSubmissions] = useState([]);
+  const [reviewedSubmissions, setReviewedSubmissions] = useState([]);
+  const [totalScore, setTotalScore] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -18,6 +20,19 @@ const Student = () => {
       navigate('/');
     }
   }, [navigate]);
+
+  useEffect(() => {
+    // In a real application, you would fetch this data from a backend
+    setReviewedSubmissions([
+      { id: 3, image: '/placeholder.svg', description: 'ช่วยเหลือผู้สูงอายุข้ามถนน', score: 80, date: '2023-03-15' },
+      { id: 4, image: '/placeholder.svg', description: 'บริจาคเลือด', score: 90, date: '2023-03-10' },
+    ]);
+  }, []);
+
+  useEffect(() => {
+    const newTotalScore = reviewedSubmissions.reduce((sum, submission) => sum + submission.score, 0);
+    setTotalScore(newTotalScore);
+  }, [reviewedSubmissions]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -77,6 +92,21 @@ const Student = () => {
           <p>วันที่ส่ง: {submission.date}</p>
         </div>
       ))}
+
+      <h3 className="text-xl font-semibold mb-4">ภาพที่ตรวจแล้ว</h3>
+      {reviewedSubmissions.map((submission) => (
+        <div key={submission.id} className="mb-6 p-4 border rounded">
+          <img src={submission.image} alt="Reviewed Submission" className="mb-2 max-w-sm h-auto rounded" />
+          <p className="mb-2">{submission.description}</p>
+          <p>วันที่ส่ง: {submission.date}</p>
+          <p>คะแนน: {submission.score}</p>
+        </div>
+      ))}
+
+      <div>
+        <h3 className="text-xl font-semibold mb-4">คะแนนรวม</h3>
+        <p className="text-2xl font-bold">{totalScore} คะแนน</p>
+      </div>
     </div>
   );
 };
