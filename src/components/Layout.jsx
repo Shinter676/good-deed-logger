@@ -6,12 +6,15 @@ import { navItems } from "@/nav-items";
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const user = localStorage.getItem('user');
 
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-white shadow-sm">
         <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex space-x-4">
+          <div className="flex-grow"></div>
+          <div className="flex items-center space-x-4">
+            {user && <span className="mr-4">สวัสดี, {user}</span>}
             {navItems.map((item) => (
               <Button
                 key={item.to}

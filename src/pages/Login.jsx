@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -9,6 +9,13 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      navigate(user === 'admin' ? '/admin' : '/student');
+    }
+  }, [navigate]);
 
   const handleLogin = () => {
     if ((username === 'test' && password === '123') || (username === 'admin' && password === '123')) {

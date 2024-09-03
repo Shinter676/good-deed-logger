@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,17 @@ import { useToast } from "@/components/ui/use-toast";
 const Student = () => {
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!user && user === 'test');
+    if (!user) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -44,6 +53,10 @@ const Student = () => {
     localStorage.removeItem('user');
     navigate('/');
   };
+
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
     <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">

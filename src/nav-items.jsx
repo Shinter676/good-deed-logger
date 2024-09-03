@@ -1,6 +1,5 @@
-import { HomeIcon, LogInIcon, UserIcon, ShieldIcon } from "lucide-react";
+import { HomeIcon, UserIcon, ShieldIcon } from "lucide-react";
 import Index from "./pages/Index.jsx";
-import Login from "./pages/Login.jsx";
 import Student from "./pages/Student.jsx";
 import Admin from "./pages/Admin.jsx";
 
@@ -10,12 +9,6 @@ export const navItems = [
     to: "/",
     icon: <HomeIcon className="h-4 w-4" />,
     page: <Index />,
-  },
-  {
-    title: "เข้าสู่ระบบ",
-    to: "/login",
-    icon: <LogInIcon className="h-4 w-4" />,
-    page: <Login />,
   },
   {
     title: "กิจกรรมทำความดี",
