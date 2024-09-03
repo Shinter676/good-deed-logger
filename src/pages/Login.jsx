@@ -15,8 +15,8 @@ const Login = () => {
 
   useEffect(() => {
     const initializeUsers = async () => {
-      const adminRef = ref(database, 'users/admin@example.com');
-      const studentRef = ref(database, 'users/student@example.com');
+      const adminRef = ref(database, 'users/admin_example_com');
+      const studentRef = ref(database, 'users/student_example_com');
 
       const adminSnapshot = await get(adminRef);
       const studentSnapshot = await get(studentRef);
@@ -39,7 +39,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      const userRef = ref(database, `users/${email.replace('.', ',')}`);
+      const userRef = ref(database, `users/${email.replace(/\./g, '_')}`);
       const userSnapshot = await get(userRef);
       const userRole = userSnapshot.val().role;
 
