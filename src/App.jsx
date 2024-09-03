@@ -1,5 +1,5 @@
 import React from 'react';
-import NavBar from './components/NavBar';  // แก้ไข import path
+import NavBar from './components/NavBar';  // ตรวจสอบว่า path นี้ถูกต้อง
 
 function App() {
   return (
