@@ -15,8 +15,8 @@ const Login = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        localStorage.setItem('user', user.email === 'admin@example.com' ? 'admin' : 'student');
-        navigate(user.email === 'admin@example.com' ? '/admin' : '/student');
+        localStorage.setItem('user', user.email.split('@')[0] === 'admin' ? 'admin' : 'student');
+        navigate(user.email.split('@')[0] === 'admin' ? '/admin' : '/student');
       }
     });
 
@@ -33,7 +33,7 @@ const Login = () => {
         title: "เข้าสู่ระบบสำเร็จ",
         description: `ยินดีต้อนรับ ${username}`,
       });
-      localStorage.setItem('user', userCredential.user.email === 'admin@example.com' ? 'admin' : 'student');
+      localStorage.setItem('user', userCredential.user.email.split('@')[0] === 'admin' ? 'admin' : 'student');
     } catch (error) {
       console.error("Authentication error:", error);
       toast({
