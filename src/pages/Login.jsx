@@ -15,8 +15,8 @@ const Login = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        localStorage.setItem('user', user.email.split('@')[0] === 'admin' ? 'admin' : 'student');
-        navigate(user.email.split('@')[0] === 'admin' ? '/admin' : '/student');
+        localStorage.setItem('user', user.email === 'admin@example.com' ? 'admin' : 'student');
+        navigate(user.email === 'admin@example.com' ? '/admin' : '/student');
       }
     });
 
@@ -26,14 +26,12 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Convert username to email format for Firebase authentication
-      const email = `${username}@example.com`;
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, username, password);
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
         description: `ยินดีต้อนรับ ${username}`,
       });
-      localStorage.setItem('user', userCredential.user.email.split('@')[0] === 'admin' ? 'admin' : 'student');
+      localStorage.setItem('user', userCredential.user.email === 'admin@example.com' ? 'admin' : 'student');
     } catch (error) {
       console.error("Authentication error:", error);
       toast({
@@ -51,7 +49,7 @@ const Login = () => {
         <form onSubmit={handleLogin}>
           <Input
             type="text"
-            placeholder="ชื่อผู้ใช้"
+            placeholder="อีเมล"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="mb-4"
@@ -70,9 +68,9 @@ const Login = () => {
         <div className="mt-4">
           <h3 className="text-lg font-semibold mb-2">รายชื่อผู้ใช้และรหัสผ่านที่ใช้ได้:</h3>
           <ul className="list-disc pl-5">
-            <li>ชื่อผู้ใช้: admin, รหัสผ่าน: admin123</li>
-            <li>ชื่อผู้ใช้: student1, รหัสผ่าน: student123</li>
-            <li>ชื่อผู้ใช้: student2, รหัสผ่าน: student456</li>
+            <li>อีเมล: admin@example.com, รหัสผ่าน: admin123</li>
+            <li>อีเมล: student1@example.com, รหัสผ่าน: student123</li>
+            <li>อีเมล: student2@example.com, รหัสผ่าน: student456</li>
           </ul>
         </div>
       </div>
