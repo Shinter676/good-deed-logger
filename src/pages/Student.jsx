@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { auth, database } from '../firebase';
+import { ref, push, set, onValue, query, orderByChild, equalTo } from 'firebase/database';
 
 const Student = () => {
   const [image, setImage] = useState(null);
@@ -13,13 +15,20 @@ const Student = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (!user || user === 'admin') {
-      navigate('/');
-    }
-    // Load pending submissions from localStorage
-    const storedPendingSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions') || '[]');
-    setPendingSubmissions(storedPendingSubmissions.filter(sub => sub.studentName === user));
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (!user) {
+        navigate('/login');
+      } else {
+        const submissionsRef = query(ref(database, 'submissions'), orderByChild('studentId'), equalTo(user.uid));
+        onValue(submissionsRef, (snapshot) => {
+          const data = snapshot.val();
+          const submissions = data ? Object.values(data).filter(sub => sub.score === 0) : [];
+          setPendingSubmissions(submissions);
+        });
+      }
+    });
+
+    return () => unsubscribe();
   }, [navigate]);
 
   const handleImageUpload = (e) => {
@@ -35,28 +44,32 @@ const Student = () => {
 
   const handleSubmit = () => {
     if (image && description) {
-      const user = localStorage.getItem('user');
+      const user = auth.currentUser;
       const newSubmission = {
-        id: Date.now(),
-        studentName: user,
+        studentId: user.uid,
+        studentEmail: user.email,
         image,
         description,
-        date: new Date().toLocaleDateString(),
+        date: new Date().toISOString(),
         score: 0
       };
-      const updatedPendingSubmissions = [...pendingSubmissions, newSubmission];
-      setPendingSubmissions(updatedPendingSubmissions);
-      
-      // Update localStorage
-      const allPendingSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions') || '[]');
-      localStorage.setItem('pendingSubmissions', JSON.stringify([...allPendingSubmissions, newSubmission]));
-
-      toast({
-        title: "อัพโหลดสำเร็จ",
-        description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
-      });
-      setImage(null);
-      setDescription('');
+      const newSubmissionRef = push(ref(database, 'submissions'));
+      set(newSubmissionRef, newSubmission)
+        .then(() => {
+          toast({
+            title: "อัพโหลดสำเร็จ",
+            description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
+          });
+          setImage(null);
+          setDescription('');
+        })
+        .catch((error) => {
+          toast({
+            title: "เกิดข้อผิดพลาด",
+            description: "ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง",
+            variant: "destructive",
+          });
+        });
     } else {
       toast({
         title: "เกิดข้อผิดพลาด",
@@ -86,7 +99,7 @@ const Student = () => {
         <div key={submission.id} className="mb-6 p-4 border rounded">
           <img src={submission.image} alt="Submission" className="mb-2 max-w-sm h-auto rounded" />
           <p className="mb-2">{submission.description}</p>
-          <p>วันที่ส่ง: {submission.date}</p>
+          <p>วันที่ส่ง: {new Date(submission.date).toLocaleDateString()}</p>
         </div>
       ))}
     </div>

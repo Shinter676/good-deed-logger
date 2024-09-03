@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { auth, database } from '../firebase';
+import { ref, onValue, update } from 'firebase/database';
 
 const Admin = () => {
   const [pendingSubmissions, setPendingSubmissions] = useState([]);
@@ -10,13 +12,20 @@ const Admin = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user !== 'admin') {
-      navigate('/');
-    }
-    // Load pending submissions from localStorage
-    const storedPendingSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions') || '[]');
-    setPendingSubmissions(storedPendingSubmissions);
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user && user.email === 'admin@example.com') {
+        const submissionsRef = ref(database, 'submissions');
+        onValue(submissionsRef, (snapshot) => {
+          const data = snapshot.val();
+          const submissions = data ? Object.entries(data).map(([id, sub]) => ({...sub, id})).filter(sub => sub.score === 0) : [];
+          setPendingSubmissions(submissions);
+        });
+      } else {
+        navigate('/');
+      }
+    });
+
+    return () => unsubscribe();
   }, [navigate]);
 
   const handleScoreChange = (id, score) => {
@@ -26,19 +35,27 @@ const Admin = () => {
   };
 
   const handleSubmitScores = () => {
-    const reviewedSubmissions = pendingSubmissions.filter(sub => sub.score > 0);
-    const existingReviewed = JSON.parse(localStorage.getItem('reviewedSubmissions') || '[]');
-    const updatedReviewed = [...existingReviewed, ...reviewedSubmissions];
-    localStorage.setItem('reviewedSubmissions', JSON.stringify(updatedReviewed));
-
-    const remainingPending = pendingSubmissions.filter(sub => sub.score === 0);
-    setPendingSubmissions(remainingPending);
-    localStorage.setItem('pendingSubmissions', JSON.stringify(remainingPending));
-
-    toast({
-      title: "บันทึกคะแนนสำเร็จ",
-      description: "คะแนนถูกบันทึกและย้ายไปยังภาพที่ตรวจแล้ว",
+    const updates = {};
+    pendingSubmissions.forEach(sub => {
+      if (sub.score > 0) {
+        updates[`/submissions/${sub.id}/score`] = sub.score;
+      }
     });
+
+    update(ref(database), updates)
+      .then(() => {
+        toast({
+          title: "บันทึกคะแนนสำเร็จ",
+          description: "คะแนนถูกบันทึกและอัพเดทในฐานข้อมูลแล้ว",
+        });
+      })
+      .catch((error) => {
+        toast({
+          title: "เกิดข้อผิดพลาด",
+          description: "ไม่สามารถบันทึกคะแนนได้ กรุณาลองใหม่อีกครั้ง",
+          variant: "destructive",
+        });
+      });
   };
 
   return (
@@ -48,7 +65,7 @@ const Admin = () => {
         <h3 className="text-xl font-semibold mb-4">รอการตรวจ</h3>
         {pendingSubmissions.map((submission) => (
           <div key={submission.id} className="mb-6 p-4 border rounded">
-            <h4 className="text-lg font-semibold mb-2">{submission.studentName}</h4>
+            <h4 className="text-lg font-semibold mb-2">{submission.studentEmail}</h4>
             <img src={submission.image} alt="Submission" className="mb-2 max-w-sm h-auto rounded" />
             <p className="mb-2">{submission.description}</p>
             <div className="flex items-center">
