@@ -1,10 +1,10 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { navItems } from "@/nav-items";
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = localStorage.getItem('user');
@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    navigate('/');
+    navigate('/login');
   };
 
   const filteredNavItems = navItems.filter(item => {
@@ -24,7 +24,7 @@ const Layout = ({ children }) => {
   return (
     <div className="min-h-screen flex">
       <main className="flex-grow p-8">
-        {children}
+        <Outlet />
       </main>
       <nav className="w-64 bg-gray-100 p-6 flex flex-col justify-between">
         <div>
