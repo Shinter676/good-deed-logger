@@ -9,8 +9,6 @@ import Login from "./pages/Login";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const user = localStorage.getItem('user');
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -24,24 +22,35 @@ const App = () => {
                   key={to}
                   path={to}
                   element={
-                    user ? (
-                      (to === '/admin' && user !== 'admin') || (to === '/student' && user === 'admin') ? (
-                        <Navigate to="/" replace />
-                      ) : (
-                        page
-                      )
-                    ) : (
-                      <Navigate to="/login" replace />
-                    )
+                    <RequireAuth>
+                      {page}
+                    </RequireAuth>
                   }
                 />
               ))}
             </Route>
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   );
+};
+
+const RequireAuth = ({ children }) => {
+  const user = localStorage.getItem('user');
+  const location = useLocation();
+
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if ((location.pathname === '/admin' && user !== 'admin') || 
+      (location.pathname === '/student' && user === 'admin')) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 };
 
 export default App;
