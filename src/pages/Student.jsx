@@ -8,15 +8,14 @@ import { useToast } from "@/components/ui/use-toast";
 const Student = () => {
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [pendingSubmissions, setPendingSubmissions] = useState([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     const user = localStorage.getItem('user');
-    setIsLoggedIn(!!user && user === 'test');
-    if (!user) {
-      navigate('/login');
+    if (!user || user === 'admin') {
+      navigate('/');
     }
   }, [navigate]);
 
@@ -33,7 +32,13 @@ const Student = () => {
 
   const handleSubmit = () => {
     if (image && description) {
-      // Here you would typically send the image and description to a server
+      const newSubmission = {
+        id: Date.now(),
+        image,
+        description,
+        date: new Date().toLocaleDateString()
+      };
+      setPendingSubmissions([...pendingSubmissions, newSubmission]);
       toast({
         title: "อัพโหลดสำเร็จ",
         description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
@@ -49,17 +54,8 @@ const Student = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/');
-  };
-
-  if (!isLoggedIn) {
-    return null;
-  }
-
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+    <div className="max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">กิจกรรมทำความดี - เก็บขยะ</h2>
       <Input type="file" accept="image/*" onChange={handleImageUpload} className="mb-4" />
       {image && (
@@ -71,8 +67,16 @@ const Student = () => {
         onChange={(e) => setDescription(e.target.value)}
         className="mb-4"
       />
-      <Button onClick={handleSubmit} className="mr-4">ส่งรูปภาพและข้อความ</Button>
-      <Button onClick={handleLogout} variant="outline">ออกจากระบบ</Button>
+      <Button onClick={handleSubmit} className="mb-8">ส่งรูปภาพและข้อความ</Button>
+
+      <h3 className="text-xl font-semibold mb-4">รอการตรวจ</h3>
+      {pendingSubmissions.map((submission) => (
+        <div key={submission.id} className="mb-6 p-4 border rounded">
+          <img src={submission.image} alt="Submission" className="mb-2 max-w-sm h-auto rounded" />
+          <p className="mb-2">{submission.description}</p>
+          <p>วันที่ส่ง: {submission.date}</p>
+        </div>
+      ))}
     </div>
   );
 };

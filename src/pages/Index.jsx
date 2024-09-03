@@ -11,9 +11,7 @@ const Index = () => {
       <h1 className="text-4xl font-bold mb-4">ระบบบันทึกความดี</h1>
       <p className="text-xl text-gray-600 mb-8">บันทึกความดีของคุณวันนี้</p>
       {!user && (
-        <div className="space-x-4">
-          <Button onClick={() => navigate('/login')}>เข้าสู่ระบบ</Button>
-        </div>
+        <Button onClick={() => navigate('/login')}>เข้าสู่ระบบ</Button>
       )}
     </div>
   );

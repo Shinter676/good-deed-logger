@@ -1,38 +1,54 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { navItems } from "@/nav-items";
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const user = localStorage.getItem('user');
+  const isAdmin = user === 'admin';
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
+  const filteredNavItems = navItems.filter(item => {
+    if (item.to === '/admin' && !isAdmin) return false;
+    if (item.to === '/student' && isAdmin) return false;
+    return true;
+  });
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white shadow-sm">
-        <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex-grow"></div>
-          <div className="flex items-center space-x-4">
-            {user && <span className="mr-4">สวัสดี, {user}</span>}
-            {navItems.map((item) => (
-              <Button
-                key={item.to}
-                asChild
-                variant={location.pathname === item.to ? "default" : "ghost"}
-              >
-                <Link to={item.to} className="flex items-center space-x-2">
-                  {item.icon}
-                  <span>{item.title}</span>
-                </Link>
-              </Button>
-            ))}
-          </div>
-        </nav>
-      </header>
-      <main className="flex-grow container mx-auto px-4 py-8">
+    <div className="min-h-screen flex">
+      <main className="flex-grow p-8">
         {children}
       </main>
+      <nav className="w-64 bg-gray-100 p-6 flex flex-col justify-between">
+        <div>
+          {user && <p className="mb-4 font-semibold">สวัสดี, {user}</p>}
+          {filteredNavItems.map((item) => (
+            <Button
+              key={item.to}
+              asChild
+              variant={location.pathname === item.to ? "default" : "ghost"}
+              className="w-full justify-start mb-2"
+            >
+              <Link to={item.to} className="flex items-center space-x-2">
+                {item.icon}
+                <span>{item.title}</span>
+              </Link>
+            </Button>
+          ))}
+        </div>
+        {user && (
+          <Button onClick={handleLogout} variant="outline" className="mt-auto">
+            ออกจากระบบ
+          </Button>
+        )}
+      </nav>
     </div>
   );
 };
