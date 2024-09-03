@@ -11,7 +11,7 @@ const firebaseConfig = {
   messagingSenderId: "902869778520",
   appId: "1:902869778520:web:42b0347e23676a16434a2d",
   measurementId: "G-VFQFPRPVSP",
-  databaseURL: "https://chemy-x-story.firebaseio.com"
+  databaseURL: "https://chemy-x-story-default-rtdb.firebaseio.com"
 };
 
 const app = initializeApp(firebaseConfig);
