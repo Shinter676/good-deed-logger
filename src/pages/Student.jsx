@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/components/ui/use-toast"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 
 const Student = () => {
   const [image, setImage] = useState(null);
+  const [description, setDescription] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -21,18 +23,18 @@ const Student = () => {
   };
 
   const handleSubmit = () => {
-    if (image) {
-      // Here you would typically send the image to a server
-      // For this example, we'll just show a success message
+    if (image && description) {
+      // Here you would typically send the image and description to a server
       toast({
         title: "อัพโหลดสำเร็จ",
-        description: "รูปภาพของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
+        description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
       });
       setImage(null);
+      setDescription('');
     } else {
       toast({
         title: "เกิดข้อผิดพลาด",
-        description: "กรุณาเลือกรูปภาพก่อนส่ง",
+        description: "กรุณาเลือกรูปภาพและใส่ข้อความก่อนส่ง",
         variant: "destructive",
       });
     }
@@ -44,16 +46,20 @@ const Student = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold mb-6">บันทึกความดี - เก็บขยะ</h2>
-        <Input type="file" accept="image/*" onChange={handleImageUpload} className="mb-4" />
-        {image && (
-          <img src={image} alt="Preview" className="mb-4 max-w-full h-auto rounded" />
-        )}
-        <Button onClick={handleSubmit} className="mr-4">ส่งรูปภาพ</Button>
-        <Button onClick={handleLogout} variant="outline">ออกจากระบบ</Button>
-      </div>
+    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-2xl font-bold mb-6">กิจกรรมทำความดี - เก็บขยะ</h2>
+      <Input type="file" accept="image/*" onChange={handleImageUpload} className="mb-4" />
+      {image && (
+        <img src={image} alt="Preview" className="mb-4 max-w-full h-auto rounded" />
+      )}
+      <Textarea
+        placeholder="อธิบายกิจกรรมความดีของคุณ"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        className="mb-4"
+      />
+      <Button onClick={handleSubmit} className="mr-4">ส่งรูปภาพและข้อความ</Button>
+      <Button onClick={handleLogout} variant="outline">ออกจากระบบ</Button>
     </div>
   );
 };

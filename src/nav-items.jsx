@@ -18,7 +18,7 @@ export const navItems = [
     page: <Login />,
   },
   {
-    title: "นักเรียน",
+    title: "กิจกรรมทำความดี",
     to: "/student",
     icon: <UserIcon className="h-4 w-4" />,
     page: <Student />,
