@@ -67,6 +67,14 @@ const Login = () => {
           />
           <Button type="submit" className="w-full mb-4">เข้าสู่ระบบ</Button>
         </form>
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">รายชื่อผู้ใช้และรหัสผ่านที่ใช้ได้:</h3>
+          <ul className="list-disc pl-5">
+            <li>ชื่อผู้ใช้: admin, รหัสผ่าน: admin123</li>
+            <li>ชื่อผู้ใช้: student1, รหัสผ่าน: student123</li>
+            <li>ชื่อผู้ใช้: student2, รหัสผ่าน: student456</li>
+          </ul>
+        </div>
       </div>
     </div>
   );
