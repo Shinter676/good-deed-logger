@@ -1,14 +1,32 @@
-import { HomeIcon } from "lucide-react";
+import { HomeIcon, LogInIcon, UserIcon, ShieldIcon } from "lucide-react";
 import Index from "./pages/Index.jsx";
+import Login from "./pages/Login.jsx";
+import Student from "./pages/Student.jsx";
+import Admin from "./pages/Admin.jsx";
 
-/**
- * Central place for defining the navigation items. Used for navigation components and routing.
- */
 export const navItems = [
   {
-    title: "Home",
+    title: "หน้าหลัก",
     to: "/",
     icon: <HomeIcon className="h-4 w-4" />,
     page: <Index />,
+  },
+  {
+    title: "เข้าสู่ระบบ",
+    to: "/login",
+    icon: <LogInIcon className="h-4 w-4" />,
+    page: <Login />,
+  },
+  {
+    title: "นักเรียน",
+    to: "/student",
+    icon: <UserIcon className="h-4 w-4" />,
+    page: <Student />,
+  },
+  {
+    title: "แอดมิน",
+    to: "/admin",
+    icon: <ShieldIcon className="h-4 w-4" />,
+    page: <Admin />,
   },
 ];
