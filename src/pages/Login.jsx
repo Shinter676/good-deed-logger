@@ -22,13 +22,21 @@ const Login = () => {
       const studentSnapshot = await get(studentRef);
 
       if (!adminSnapshot.exists()) {
-        await createUserWithEmailAndPassword(auth, 'admin@example.com', 'adminpassword');
-        await set(adminRef, { role: 'admin' });
+        try {
+          await createUserWithEmailAndPassword(auth, 'admin@example.com', 'adminpassword');
+          await set(adminRef, { role: 'admin' });
+        } catch (error) {
+          console.error("Error creating admin user:", error);
+        }
       }
 
       if (!studentSnapshot.exists()) {
-        await createUserWithEmailAndPassword(auth, 'student@example.com', 'studentpassword');
-        await set(studentRef, { role: 'student' });
+        try {
+          await createUserWithEmailAndPassword(auth, 'student@example.com', 'studentpassword');
+          await set(studentRef, { role: 'student' });
+        } catch (error) {
+          console.error("Error creating student user:", error);
+        }
       }
     };
 
@@ -41,17 +49,21 @@ const Login = () => {
       await signInWithEmailAndPassword(auth, email, password);
       const userRef = ref(database, `users/${email.replace(/\./g, '_')}`);
       const userSnapshot = await get(userRef);
-      const userRole = userSnapshot.val().role;
+      
+      if (userSnapshot.exists()) {
+        const userRole = userSnapshot.val().role;
+        toast({
+          title: "เข้าสู่ระบบสำเร็จ",
+          description: `ยินดีต้อนรับ ${email} (${userRole})`,
+        });
 
-      toast({
-        title: "เข้าสู่ระบบสำเร็จ",
-        description: `ยินดีต้อนรับ ${email} (${userRole})`,
-      });
+        localStorage.setItem('user', email);
+        localStorage.setItem('role', userRole);
 
-      localStorage.setItem('user', email);
-      localStorage.setItem('role', userRole);
-
-      navigate('/');
+        navigate(userRole === 'admin' ? '/admin' : '/student');
+      } else {
+        throw new Error("User role not found");
+      }
     } catch (error) {
       toast({
         title: "เข้าสู่ระบบไม่สำเร็จ",
