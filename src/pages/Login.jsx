@@ -4,12 +4,11 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { auth } from '../firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -24,29 +23,22 @@ const Login = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-  const handleAuth = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      let userCredential;
-      if (isSignUp) {
-        userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        toast({
-          title: "สมัครสมาชิกสำเร็จ",
-          description: "บัญชีของคุณถูกสร้างแล้ว",
-        });
-      } else {
-        userCredential = await signInWithEmailAndPassword(auth, email, password);
-        toast({
-          title: "เข้าสู่ระบบสำเร็จ",
-          description: `ยินดีต้อนรับ ${email}`,
-        });
-      }
+      // Convert username to email format for Firebase authentication
+      const email = `${username}@example.com`;
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      toast({
+        title: "เข้าสู่ระบบสำเร็จ",
+        description: `ยินดีต้อนรับ ${username}`,
+      });
       localStorage.setItem('user', userCredential.user.email === 'admin@example.com' ? 'admin' : 'student');
     } catch (error) {
       console.error("Authentication error:", error);
       toast({
-        title: isSignUp ? "สมัครสมาชิกไม่สำเร็จ" : "เข้าสู่ระบบไม่สำเร็จ",
-        description: error.message,
+        title: "เข้าสู่ระบบไม่สำเร็จ",
+        description: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
         variant: "destructive",
       });
     }
@@ -55,13 +47,13 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">{isSignUp ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ'}</h2>
-        <form onSubmit={handleAuth}>
+        <h2 className="text-2xl font-bold mb-6 text-center">เข้าสู่ระบบ</h2>
+        <form onSubmit={handleLogin}>
           <Input
-            type="email"
-            placeholder="อีเมล"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="ชื่อผู้ใช้"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="mb-4"
             required
           />
@@ -73,11 +65,8 @@ const Login = () => {
             className="mb-6"
             required
           />
-          <Button type="submit" className="w-full mb-4">{isSignUp ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ'}</Button>
+          <Button type="submit" className="w-full mb-4">เข้าสู่ระบบ</Button>
         </form>
-        <Button onClick={() => setIsSignUp(!isSignUp)} variant="outline" className="w-full">
-          {isSignUp ? 'มีบัญชีอยู่แล้ว? เข้าสู่ระบบ' : 'ยังไม่มีบัญชี? สมัครสมาชิก'}
-        </Button>
       </div>
     </div>
   );
