@@ -11,7 +11,6 @@ const Admin = () => {
     { id: 2, studentName: 'นักเรียน B', image: '/placeholder.svg', description: 'ทำความสะอาดชายหาด', score: 0 },
   ]);
   const [reviewedSubmissions, setReviewedSubmissions] = useState([]);
-  const [totalScore, setTotalScore] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -35,8 +34,6 @@ const Admin = () => {
     }));
     setReviewedSubmissions([...reviewedSubmissions, ...newReviewedSubmissions]);
     setPendingSubmissions([]);
-    const newTotalScore = totalScore + newReviewedSubmissions.reduce((sum, sub) => sum + sub.score, 0);
-    setTotalScore(newTotalScore);
     toast({
       title: "บันทึกคะแนนสำเร็จ",
       description: "คะแนนทั้งหมดถูกบันทึกเรียบร้อยแล้ว",
@@ -73,14 +70,6 @@ const Admin = () => {
         </div>
       </div>
       <div className="w-1/3 pl-4">
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>คะแนนรวม</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{totalScore} คะแนน</p>
-          </CardContent>
-        </Card>
         <Card>
           <CardHeader>
             <CardTitle>ตรวจแล้ว</CardTitle>
