@@ -48,10 +48,10 @@ const Admin = () => {
     // Update total scores
     const totalScores = {};
     updatedReviewedSubmissions.forEach(sub => {
-      if (totalScores[sub.studentEmail]) {
-        totalScores[sub.studentEmail] += sub.score;
+      if (totalScores[sub.userId]) {
+        totalScores[sub.userId] += sub.score;
       } else {
-        totalScores[sub.studentEmail] = sub.score;
+        totalScores[sub.userId] = sub.score;
       }
     });
     localStorage.setItem('totalScores', JSON.stringify(totalScores));
@@ -76,7 +76,7 @@ const Admin = () => {
               <TableHead>ชื่อเรื่อง</TableHead>
               <TableHead>วันที่</TableHead>
               <TableHead>คะแนน</TableHead>
-              <TableHead>ไฟล์ภาพประกอบ</TableHead>
+              <TableHead>ไอดีผู้ใช้</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -98,9 +98,7 @@ const Admin = () => {
                     max="100"
                   />
                 </TableCell>
-                <TableCell>
-                  <Button variant="outline" size="sm">ดูภาพ</Button>
-                </TableCell>
+                <TableCell>{submission.userId}</TableCell>
               </TableRow>
             ))}
           </TableBody>

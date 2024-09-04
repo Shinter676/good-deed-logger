@@ -11,11 +11,14 @@ const Student = () => {
   const [pendingSubmissions, setPendingSubmissions] = useState([]);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || user.role !== 'student') {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (!storedUser || storedUser.role !== 'student') {
       navigate('/login');
+    } else {
+      setUser(storedUser);
     }
     // Load pending submissions from localStorage
     const savedSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
@@ -34,9 +37,10 @@ const Student = () => {
   };
 
   const handleSubmit = () => {
-    if (image && description) {
+    if (image && description && user) {
       const newSubmission = {
         id: Date.now(),
+        userId: user.username,
         image,
         description,
         date: new Date().toISOString(),
