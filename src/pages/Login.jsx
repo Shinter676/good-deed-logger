@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -13,7 +13,8 @@ const Login = ({ onLogin }) => {
   const handleLogin = (e) => {
     e.preventDefault();
     if (username === 'admin' && password === '123') {
-      onLogin({ username: 'admin', role: 'admin' });
+      // บันทึกข้อมูลผู้ใช้ลงใน localStorage
+      localStorage.setItem('user', JSON.stringify({ username: 'admin', role: 'admin' }));
       navigate('/admin');
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
