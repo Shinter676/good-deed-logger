@@ -13,8 +13,8 @@ const Student = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user !== 'student') {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || user.role !== 'student') {
       navigate('/login');
     }
   }, [navigate]);

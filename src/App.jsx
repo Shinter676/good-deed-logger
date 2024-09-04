@@ -9,17 +9,18 @@ import TotalScore from './pages/TotalScore';
 import Login from './pages/Login';
 
 function App() {
-  const [user, setUser] = useState(localStorage.getItem('user') || null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(storedUser);
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
-  const handleLogin = (username) => {
-    setUser(username);
+  const handleLogin = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const handleLogout = () => {
@@ -34,7 +35,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/student" element={user ? <Student /> : <Navigate to="/login" />} />
-          <Route path="/admin" element={user === 'admin' ? <Admin /> : <Navigate to="/login" />} />
+          <Route path="/admin" element={user && user.role === 'admin' ? <Admin /> : <Navigate to="/login" />} />
           <Route path="/reviewed-images" element={user ? <ReviewedImages /> : <Navigate to="/login" />} />
           <Route path="/total-score" element={user ? <TotalScore /> : <Navigate to="/login" />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />

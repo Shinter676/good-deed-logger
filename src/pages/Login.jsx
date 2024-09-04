@@ -12,13 +12,19 @@ const Login = ({ onLogin }) => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if ((username === 'admin' && password === '123') || (username === 'test' && password === '123')) {
-      localStorage.setItem('user', username);
-      onLogin(username);
-      navigate(username === 'admin' ? '/admin' : '/student');
+    if (username === 'admin' && password === '123') {
+      onLogin({ username: 'admin', role: 'admin' });
+      navigate('/admin');
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
-        description: `ยินดีต้อนรับ ${username === 'admin' ? 'แอดมิน' : 'นักเรียน'}`,
+        description: "ยินดีต้อนรับ แอดมิน",
+      });
+    } else if (username === 'test' && password === '123') {
+      onLogin({ username: 'test', role: 'student' });
+      navigate('/student');
+      toast({
+        title: "เข้าสู่ระบบสำเร็จ",
+        description: "ยินดีต้อนรับ นักเรียน",
       });
     } else {
       toast({

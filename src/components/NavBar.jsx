@@ -16,13 +16,17 @@ const NavBar = ({ user, onLogout }) => {
         <Link to="/" className="text-white text-xl font-bold">ระบบบันทึกความดี</Link>
         <ul className="flex space-x-4 items-center">
           <li><Link to="/" className="text-white hover:text-gray-300">หน้าหลัก</Link></li>
-          <li><Link to="/student" className="text-white hover:text-gray-300">นักเรียน</Link></li>
-          <li><Link to="/admin" className="text-white hover:text-gray-300">แอดมิน</Link></li>
-          <li><Link to="/reviewed-images" className="text-white hover:text-gray-300">ภาพที่ตรวจแล้ว</Link></li>
-          <li><Link to="/total-score" className="text-white hover:text-gray-300">คะแนนรวม</Link></li>
+          {user && user.role === 'student' && (
+            <li><Link to="/student" className="text-white hover:text-gray-300">นักเรียน</Link></li>
+          )}
+          {user && user.role === 'admin' && (
+            <li><Link to="/admin" className="text-white hover:text-gray-300">แอดมิน</Link></li>
+          )}
           {user && (
             <>
-              <li className="text-white">สวัสดี, {user}</li>
+              <li><Link to="/reviewed-images" className="text-white hover:text-gray-300">ภาพที่ตรวจแล้ว</Link></li>
+              <li><Link to="/total-score" className="text-white hover:text-gray-300">คะแนนรวม</Link></li>
+              <li className="text-white">สวัสดี, {user.username}</li>
               <li><Button onClick={handleLogout} variant="outline" size="sm">ออกจากระบบ</Button></li>
             </>
           )}
