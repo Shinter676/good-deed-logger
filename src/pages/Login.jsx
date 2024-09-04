@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
@@ -72,9 +72,6 @@ const Login = ({ onLogin }) => {
           />
           <Button type="submit" className="w-full mb-4">เข้าสู่ระบบ</Button>
         </form>
-        <div className="text-center">
-          <Link to="/reset-password" className="text-blue-500 hover:underline">ลืมรหัสผ่าน?</Link>
-        </div>
       </div>
     </div>
   );
