@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { ErrorBoundary } from 'react-error-boundary';
 import NavBar from './components/NavBar';
 import Index from './pages/Index';
 import Student from './pages/Student';
@@ -7,11 +8,10 @@ import Admin from './pages/Admin';
 import ReviewedImages from './pages/ReviewedImages';
 import TotalScore from './pages/TotalScore';
 import Login from './pages/Login';
-import { ErrorBoundary } from 'react-error-boundary';
 
 function ErrorFallback({ error }) {
   return (
-    <div role="alert">
+    <div role="alert" className="error-boundary">
       <p>Something went wrong:</p>
       <pre>{error.message}</pre>
     </div>
