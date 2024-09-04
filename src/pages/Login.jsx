@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -14,6 +14,7 @@ const Login = () => {
     e.preventDefault();
     if ((username === 'admin' && password === '123') || (username === 'test' && password === '123')) {
       localStorage.setItem('user', username);
+      onLogin(username);
       navigate(username === 'admin' ? '/admin' : '/student');
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
