@@ -10,16 +10,14 @@ const Admin = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user !== 'admin') {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || user.role !== 'admin') {
       navigate('/login');
+      return;
     }
-    // In a real application, you would fetch pending submissions from a backend here
-    // For now, we'll use mock data
-    setPendingSubmissions([
-      { id: 1, studentEmail: 'student@example.com', image: '/placeholder.svg', description: 'เก็บขยะที่สวนสาธารณะ', score: 0 },
-      { id: 2, studentEmail: 'student2@example.com', image: '/placeholder.svg', description: 'ช่วยเหลือผู้สูงอายุข้ามถนน', score: 0 },
-    ]);
+    // Load pending submissions from localStorage
+    const savedSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
+    setPendingSubmissions(savedSubmissions);
   }, [navigate]);
 
   const handleScoreChange = (id, score) => {
@@ -29,13 +27,16 @@ const Admin = () => {
   };
 
   const handleSubmitScores = () => {
-    // In a real application, you would send the updated scores to a backend here
+    // Update localStorage with scored submissions
+    localStorage.setItem('pendingSubmissions', JSON.stringify(pendingSubmissions));
     toast({
       title: "บันทึกคะแนนสำเร็จ",
       description: "คะแนนถูกบันทึกและอัพเดทในระบบแล้ว",
     });
     // Remove scored submissions from the pending list
-    setPendingSubmissions(pendingSubmissions.filter(sub => sub.score === 0));
+    const unscored = pendingSubmissions.filter(sub => sub.score === 0);
+    setPendingSubmissions(unscored);
+    localStorage.setItem('pendingSubmissions', JSON.stringify(unscored));
   };
 
   return (

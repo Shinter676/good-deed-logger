@@ -17,6 +17,9 @@ const Student = () => {
     if (!user || user.role !== 'student') {
       navigate('/login');
     }
+    // Load pending submissions from localStorage
+    const savedSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
+    setPendingSubmissions(savedSubmissions);
   }, [navigate]);
 
   const handleImageUpload = (e) => {
@@ -39,7 +42,10 @@ const Student = () => {
         date: new Date().toISOString(),
         score: 0
       };
-      setPendingSubmissions([...pendingSubmissions, newSubmission]);
+      const updatedSubmissions = [...pendingSubmissions, newSubmission];
+      setPendingSubmissions(updatedSubmissions);
+      // Save to localStorage
+      localStorage.setItem('pendingSubmissions', JSON.stringify(updatedSubmissions));
       toast({
         title: "อัพโหลดสำเร็จ",
         description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",

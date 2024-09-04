@@ -4,12 +4,16 @@ const TotalScore = () => {
   const [scores, setScores] = useState({});
 
   useEffect(() => {
-    // In a real application, you would fetch scores from a backend here
-    // For now, we'll use mock data
-    setScores({
-      'student@example.com': 150,
-      'student2@example.com': 120,
-    });
+    const pendingSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
+    const scoredSubmissions = pendingSubmissions.filter(sub => sub.score > 0);
+    
+    const totalScores = scoredSubmissions.reduce((acc, sub) => {
+      const email = sub.studentEmail || 'Unknown';
+      acc[email] = (acc[email] || 0) + sub.score;
+      return acc;
+    }, {});
+
+    setScores(totalScores);
   }, []);
 
   return (
@@ -21,6 +25,9 @@ const TotalScore = () => {
           <p className="ml-4">คะแนนรวม: {totalScore}</p>
         </div>
       ))}
+      {Object.keys(scores).length === 0 && (
+        <p>ยังไม่มีคะแนนที่บันทึก</p>
+      )}
     </div>
   );
 };
