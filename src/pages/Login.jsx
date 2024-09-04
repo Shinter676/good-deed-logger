@@ -19,7 +19,7 @@ const Login = ({ onLogin }) => {
         title: "เข้าสู่ระบบสำเร็จ",
         description: "ยินดีต้อนรับ แอดมิน",
       });
-    } else if (['นักเรียน1', 'นักเรียน2', 'นักเรียน3'].includes(username) && password === '123') {
+    } else if (['Class 1/1', 'Class 1/2', 'Class 1/3'].includes(username) && password === '123') {
       onLogin({ username: username, role: 'student' });
       navigate('/student');
       toast({
