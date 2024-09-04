@@ -16,10 +16,8 @@ function App() {
     const storedUser = JSON.parse(localStorage.getItem('user'));
     if (storedUser) {
       setUser(storedUser);
-    } else {
-      navigate('/login');
     }
-  }, [navigate]);
+  }, []);
 
   return (
     <div className="App">
