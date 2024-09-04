@@ -12,19 +12,12 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (email === 'admin@example.com' && password === 'adminpassword') {
-      localStorage.setItem('user', 'admin');
-      navigate('/admin');
+    if ((email === 'admin' && password === '123') || (email === 'test' && password === '123')) {
+      localStorage.setItem('user', email);
+      navigate(email === 'admin' ? '/admin' : '/student');
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
-        description: "ยินดีต้อนรับ แอดมิน",
-      });
-    } else if (email === 'student@example.com' && password === 'studentpassword') {
-      localStorage.setItem('user', 'student');
-      navigate('/student');
-      toast({
-        title: "เข้าสู่ระบบสำเร็จ",
-        description: "ยินดีต้อนรับ นักเรียน",
+        description: `ยินดีต้อนรับ ${email === 'admin' ? 'แอดมิน' : 'นักเรียน'}`,
       });
     } else {
       toast({
@@ -41,8 +34,8 @@ const Login = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">เข้าสู่ระบบ</h2>
         <form onSubmit={handleLogin}>
           <Input
-            type="email"
-            placeholder="อีเมล"
+            type="text"
+            placeholder="ชื่อผู้ใช้"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="mb-4"
@@ -59,8 +52,8 @@ const Login = () => {
           <Button type="submit" className="w-full mb-4">เข้าสู่ระบบ</Button>
         </form>
         <div className="text-sm text-gray-600">
-          <p>แอดมิน: admin@example.com / adminpassword</p>
-          <p>นักเรียน: student@example.com / studentpassword</p>
+          <p>แอดมิน: admin / 123</p>
+          <p>นักเรียน: test / 123</p>
         </div>
       </div>
     </div>
