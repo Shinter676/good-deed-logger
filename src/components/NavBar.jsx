@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 
-const NavBar = ({ user, onLogout }) => {
+const NavBar = () => {
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
+
   const handleLogout = () => {
-    onLogout();
+    localStorage.removeItem('user');
+    setUser(null);
     navigate('/login');
   };
 
