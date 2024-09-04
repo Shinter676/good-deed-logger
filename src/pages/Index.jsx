@@ -9,7 +9,7 @@ const Index = () => {
   return (
     <div className="text-center">
       <h1 className="text-4xl font-bold mb-4">CHEMY×STORY</h1>
-      <p className="text-xl text-gray-600 mb-8">บันทึกเรื่องราวเคมีของคุณวันนี้</p>
+      <p className="text-xl text-gray-600 mb-8">บันทึกความดีของคุณในวันนี้</p>
       {!user && (
         <Button onClick={() => navigate('/login')}>เข้าสู่ระบบ</Button>
       )}
