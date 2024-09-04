@@ -63,6 +63,12 @@ const Student = () => {
 
         const docRef = await addDoc(submissionsCollection, submissionData);
 
+        // เพิ่มการส่งงานใหม่ลงใน state ของ pendingSubmissions
+        setPendingSubmissions(prevSubmissions => [
+          { id: docRef.id, ...submissionData },
+          ...prevSubmissions
+        ]);
+
         toast({
           title: "อัพโหลดสำเร็จ",
           description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
@@ -70,7 +76,6 @@ const Student = () => {
 
         setImage(null);
         setDescription('');
-        fetchPendingSubmissions(user.username);
       } catch (error) {
         console.error("Error submitting:", error);
         toast({
@@ -108,7 +113,7 @@ const Student = () => {
         <div key={submission.id} className="mb-6 p-4 border rounded">
           <img src={submission.image} alt="Submission" className="mb-2 max-w-sm h-auto rounded" />
           <p className="mb-2">{submission.description}</p>
-          <p>วันที่ส่ง: {submission.date.toDate().toLocaleDateString()}</p>
+          <p>วันที่ส่ง: {submission.date instanceof Date ? submission.date.toLocaleDateString() : new Date(submission.date.seconds * 1000).toLocaleDateString()}</p>
         </div>
       ))}
     </div>
