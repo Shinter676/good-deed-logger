@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { app } from './firebase'; // เพิ่มการ import app จาก firebase
 import NavBar from './components/NavBar';
 import Index from './pages/Index';
 import Student from './pages/Student';
@@ -10,6 +11,7 @@ import Login from './pages/Login';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [firebaseInitialized, setFirebaseInitialized] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -20,6 +22,14 @@ function App() {
         console.error('Error parsing user data:', error);
         localStorage.removeItem('user');
       }
+    }
+
+    // ตรวจสอบการเชื่อมต่อ Firebase
+    if (app) {
+      console.log('Firebase initialized successfully');
+      setFirebaseInitialized(true);
+    } else {
+      console.error('Firebase initialization failed');
     }
   }, []);
 
@@ -32,6 +42,10 @@ function App() {
     localStorage.removeItem('user');
     setUser(null);
   };
+
+  if (!firebaseInitialized) {
+    return <div>กำลังโหลด...</div>;
+  }
 
   return (
     <Router>
