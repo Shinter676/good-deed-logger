@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
-import { auth, db } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -13,34 +10,16 @@ const Login = ({ onLogin }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    try {
-      const email = `${username}@example.com`;
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      let userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (!userDoc.exists()) {
-        // สร้างข้อมูลผู้ใช้ใหม่ถ้ายังไม่มี
-        const newUserData = {
-          username: username,
-          role: username === 'admin' ? 'admin' : 'student',
-          totalScore: 0
-        };
-        await setDoc(doc(db, 'users', user.uid), newUserData);
-        userDoc = { data: () => newUserData };
-      }
-
-      const userData = userDoc.data();
-      onLogin({ username: userData.username, role: userData.role });
-      navigate(userData.role === 'admin' ? '/admin' : '/student');
+    if (username === 'admin' && password === '123') {
+      onLogin({ username: 'admin', role: 'admin' });
+      navigate('/admin');
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
-        description: `ยินดีต้อนรับ ${userData.username}`,
+        description: "ยินดีต้อนรับ Admin",
       });
-    } catch (error) {
-      console.error("Error logging in:", error);
+    } else {
       toast({
         title: "เข้าสู่ระบบไม่สำเร็จ",
         description: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
