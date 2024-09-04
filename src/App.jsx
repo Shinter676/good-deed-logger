@@ -7,6 +7,16 @@ import Admin from './pages/Admin';
 import ReviewedImages from './pages/ReviewedImages';
 import TotalScore from './pages/TotalScore';
 import Login from './pages/Login';
+import { ErrorBoundary } from 'react-error-boundary';
+
+function ErrorFallback({ error }) {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+    </div>
+  );
+}
 
 function App() {
   const [user, setUser] = useState(null);
@@ -20,17 +30,35 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      {user && <NavBar />}
-      <Routes>
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/" element={user ? <Index /> : <Navigate to="/login" />} />
-        <Route path="/student" element={user && user.role === 'student' ? <Student /> : <Navigate to="/" />} />
-        <Route path="/admin" element={user && user.role === 'admin' ? <Admin /> : <Navigate to="/" />} />
-        <Route path="/reviewed-images" element={user ? <ReviewedImages /> : <Navigate to="/login" />} />
-        <Route path="/total-score" element={user ? <TotalScore /> : <Navigate to="/login" />} />
-      </Routes>
-    </div>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <div className="App">
+        {user && <NavBar />}
+        <Routes>
+          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route 
+            path="/" 
+            element={user ? <Index /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/student" 
+            element={user && user.role === 'student' ? <Student /> : <Navigate to="/" />} 
+          />
+          <Route 
+            path="/admin" 
+            element={user && user.role === 'admin' ? <Admin /> : <Navigate to="/" />} 
+          />
+          <Route 
+            path="/reviewed-images" 
+            element={user ? <ReviewedImages /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/total-score" 
+            element={user ? <TotalScore /> : <Navigate to="/login" />} 
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </div>
+    </ErrorBoundary>
   );
 }
 
