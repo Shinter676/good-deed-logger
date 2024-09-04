@@ -47,12 +47,12 @@ const Student = () => {
   const handleSubmit = async () => {
     if (image && description && user) {
       try {
-        // Upload image to Firebase Storage
+        // อัพโหลดรูปภาพไปยัง Firebase Storage
         const storageRef = ref(storage, `submissions/${Date.now()}`);
         await uploadString(storageRef, image, 'data_url');
         const imageUrl = await getDownloadURL(storageRef);
 
-        // Add submission to Firestore
+        // เพิ่มข้อมูลการส่งงานลงใน Firestore
         const submissionData = {
           userId: user.username,
           image: imageUrl,
