@@ -29,8 +29,10 @@ const Admin = () => {
   }, [navigate]);
 
   const handleScoreChange = (id, score) => {
+    const parsedScore = parseInt(score);
+    const validScore = isNaN(parsedScore) ? 0 : Math.min(Math.max(parsedScore, 0), 10);
     setPendingSubmissions(pendingSubmissions.map(sub => 
-      sub.id === id ? { ...sub, score: parseInt(score) || 0 } : sub
+      sub.id === id ? { ...sub, score: validScore } : sub
     ));
   };
 
@@ -77,7 +79,7 @@ const Admin = () => {
               <TableHead>รูปภาพ</TableHead>
               <TableHead>ชื่อเรื่อง</TableHead>
               <TableHead>วันที่</TableHead>
-              <TableHead>คะแนน</TableHead>
+              <TableHead>คะแนน (0-10)</TableHead>
               <TableHead>ไอดีผู้ใช้</TableHead>
             </TableRow>
           </TableHeader>
@@ -97,7 +99,7 @@ const Admin = () => {
                     onChange={(e) => handleScoreChange(submission.id, e.target.value)}
                     className="w-20"
                     min="0"
-                    max="100"
+                    max="10"
                   />
                 </TableCell>
                 <TableCell>{submission.userId}</TableCell>

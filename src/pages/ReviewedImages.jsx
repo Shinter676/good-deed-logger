@@ -12,9 +12,9 @@ const ReviewedImages = () => {
   const [reviewedSubmissions, setReviewedSubmissions] = useState([]);
 
   useEffect(() => {
-    // Clear reviewed submissions
-    localStorage.removeItem('reviewedSubmissions');
-    setReviewedSubmissions([]);
+    // Load reviewed submissions from localStorage
+    const storedReviewedSubmissions = JSON.parse(localStorage.getItem('reviewedSubmissions')) || [];
+    setReviewedSubmissions(storedReviewedSubmissions);
   }, []);
 
   return (
@@ -28,6 +28,7 @@ const ReviewedImages = () => {
             <TableHead>ชื่อเรื่อง</TableHead>
             <TableHead>วันที่</TableHead>
             <TableHead>คะแนน</TableHead>
+            <TableHead>ไอดีผู้ใช้</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -40,6 +41,7 @@ const ReviewedImages = () => {
               <TableCell>{submission.description}</TableCell>
               <TableCell>{new Date(submission.date).toLocaleDateString('th-TH')}</TableCell>
               <TableCell>{submission.score}</TableCell>
+              <TableCell>{submission.userId}</TableCell>
             </TableRow>
           ))}
         </TableBody>
