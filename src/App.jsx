@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { app, database } from './firebase'; // เพิ่มการ import database
-import { ref, set, get } from 'firebase/database'; // เพิ่ม import สำหรับฟังก์ชัน Firebase Realtime Database
+import { app, database, auth } from './firebase';
+import { ref, set, get } from 'firebase/database';
+import { onAuthStateChanged } from 'firebase/auth';
 import NavBar from './components/NavBar';
 import Index from './pages/Index';
 import Student from './pages/Student';
@@ -15,17 +16,10 @@ function App() {
   const [firebaseInitialized, setFirebaseInitialized] = useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('user');
-      }
-    }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
 
-    // ตรวจสอบการเชื่อมต่อ Firebase
     if (app) {
       console.log('Firebase initialized successfully');
       setFirebaseInitialized(true);
@@ -50,16 +44,20 @@ function App() {
     } else {
       console.error('Firebase initialization failed');
     }
+
+    return () => unsubscribe();
   }, []);
 
   const handleLogin = (userData) => {
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    setUser(null);
+    auth.signOut().then(() => {
+      setUser(null);
+    }).catch((error) => {
+      console.error('Error signing out:', error);
+    });
   };
 
   if (!firebaseInitialized) {
