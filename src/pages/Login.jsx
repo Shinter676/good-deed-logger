@@ -5,24 +5,24 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if ((email === 'admin' && password === '123') || (email === 'test' && password === '123')) {
-      localStorage.setItem('user', email);
-      navigate(email === 'admin' ? '/admin' : '/student');
+    if ((username === 'admin' && password === '123') || (username === 'test' && password === '123')) {
+      localStorage.setItem('user', username);
+      navigate(username === 'admin' ? '/admin' : '/student');
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
-        description: `ยินดีต้อนรับ ${email === 'admin' ? 'แอดมิน' : 'นักเรียน'}`,
+        description: `ยินดีต้อนรับ ${username === 'admin' ? 'แอดมิน' : 'นักเรียน'}`,
       });
     } else {
       toast({
         title: "เข้าสู่ระบบไม่สำเร็จ",
-        description: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+        description: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
         variant: "destructive",
       });
     }
@@ -36,8 +36,8 @@ const Login = () => {
           <Input
             type="text"
             placeholder="ชื่อผู้ใช้"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="mb-4"
             required
           />
