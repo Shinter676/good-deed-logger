@@ -13,7 +13,7 @@ const NavBar = ({ user, onLogout }) => {
   return (
     <nav className="bg-gray-800 p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-white text-xl font-bold">ระบบบันทึกความดี</Link>
+        <Link to="/" className="text-white text-xl font-bold">CHEMY×STORY</Link>
         <ul className="flex space-x-4 items-center">
           <li><Link to="/" className="text-white hover:text-gray-300">หน้าหลัก</Link></li>
           {user && user.role === 'student' && (

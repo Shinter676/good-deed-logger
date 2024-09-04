@@ -66,13 +66,13 @@ const Student = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">กิจกรรมทำความดี - เก็บขยะ</h2>
+      <h2 className="text-2xl font-bold mb-6">CHEMY×STORY - บันทึกเรื่องราวเคมี</h2>
       <Input type="file" accept="image/*" onChange={handleImageUpload} className="mb-4" />
       {image && (
         <img src={image} alt="Preview" className="mb-4 max-w-full h-auto rounded" />
       )}
       <Textarea
-        placeholder="อธิบายกิจกรรมความดีของคุณ"
+        placeholder="อธิบายเรื่องราวเคมีของคุณ"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         className="mb-4"
