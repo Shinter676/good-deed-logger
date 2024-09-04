@@ -1,31 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { auth, database } from '../firebase';
-import { ref, onValue } from 'firebase/database';
 
 const TotalScore = () => {
   const [scores, setScores] = useState({});
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        const submissionsRef = ref(database, 'submissions');
-        onValue(submissionsRef, (snapshot) => {
-          const data = snapshot.val();
-          if (data) {
-            const newScores = Object.values(data).reduce((acc, submission) => {
-              if (!acc[submission.studentEmail]) {
-                acc[submission.studentEmail] = 0;
-              }
-              acc[submission.studentEmail] += submission.score;
-              return acc;
-            }, {});
-            setScores(newScores);
-          }
-        });
-      }
+    // In a real application, you would fetch scores from a backend here
+    // For now, we'll use mock data
+    setScores({
+      'student@example.com': 150,
+      'student2@example.com': 120,
     });
-
-    return () => unsubscribe();
   }, []);
 
   return (

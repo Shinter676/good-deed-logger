@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { auth, database } from '../firebase';
-import { ref, push, set, onValue, query, orderByChild, equalTo } from 'firebase/database';
 
 const Student = () => {
   const [image, setImage] = useState(null);
@@ -15,20 +13,10 @@ const Student = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (!user) {
-        navigate('/login');
-      } else {
-        const submissionsRef = query(ref(database, 'submissions'), orderByChild('studentId'), equalTo(user.uid));
-        onValue(submissionsRef, (snapshot) => {
-          const data = snapshot.val();
-          const submissions = data ? Object.values(data).filter(sub => sub.score === 0) : [];
-          setPendingSubmissions(submissions);
-        });
-      }
-    });
-
-    return () => unsubscribe();
+    const user = localStorage.getItem('user');
+    if (user !== 'student') {
+      navigate('/login');
+    }
   }, [navigate]);
 
   const handleImageUpload = (e) => {
@@ -44,32 +32,20 @@ const Student = () => {
 
   const handleSubmit = () => {
     if (image && description) {
-      const user = auth.currentUser;
       const newSubmission = {
-        studentId: user.uid,
-        studentEmail: user.email,
+        id: Date.now(),
         image,
         description,
         date: new Date().toISOString(),
         score: 0
       };
-      const newSubmissionRef = push(ref(database, 'submissions'));
-      set(newSubmissionRef, newSubmission)
-        .then(() => {
-          toast({
-            title: "อัพโหลดสำเร็จ",
-            description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
-          });
-          setImage(null);
-          setDescription('');
-        })
-        .catch((error) => {
-          toast({
-            title: "เกิดข้อผิดพลาด",
-            description: "ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง",
-            variant: "destructive",
-          });
-        });
+      setPendingSubmissions([...pendingSubmissions, newSubmission]);
+      toast({
+        title: "อัพโหลดสำเร็จ",
+        description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
+      });
+      setImage(null);
+      setDescription('');
     } else {
       toast({
         title: "เกิดข้อผิดพลาด",

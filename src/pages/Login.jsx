@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
-import { auth, database } from '../firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { ref, set, get } from 'firebase/database';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -13,61 +10,26 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const initializeUsers = async () => {
-      const adminRef = ref(database, 'users/admin_example_com');
-      const studentRef = ref(database, 'users/student_example_com');
-
-      const adminSnapshot = await get(adminRef);
-      const studentSnapshot = await get(studentRef);
-
-      if (!adminSnapshot.exists()) {
-        try {
-          await createUserWithEmailAndPassword(auth, 'admin@example.com', 'adminpassword');
-          await set(adminRef, { role: 'admin' });
-        } catch (error) {
-          console.error("Error creating admin user:", error);
-        }
-      }
-
-      if (!studentSnapshot.exists()) {
-        try {
-          await createUserWithEmailAndPassword(auth, 'student@example.com', 'studentpassword');
-          await set(studentRef, { role: 'student' });
-        } catch (error) {
-          console.error("Error creating student user:", error);
-        }
-      }
-    };
-
-    initializeUsers();
-  }, []);
-
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      const userRef = ref(database, `users/${email.replace(/\./g, '_')}`);
-      const userSnapshot = await get(userRef);
-      
-      if (userSnapshot.exists()) {
-        const userRole = userSnapshot.val().role;
-        toast({
-          title: "เข้าสู่ระบบสำเร็จ",
-          description: `ยินดีต้อนรับ ${email} (${userRole})`,
-        });
-
-        localStorage.setItem('user', email);
-        localStorage.setItem('role', userRole);
-
-        navigate(userRole === 'admin' ? '/admin' : '/student');
-      } else {
-        throw new Error("User role not found");
-      }
-    } catch (error) {
+    if (email === 'admin@example.com' && password === 'adminpassword') {
+      localStorage.setItem('user', 'admin');
+      navigate('/admin');
+      toast({
+        title: "เข้าสู่ระบบสำเร็จ",
+        description: "ยินดีต้อนรับ แอดมิน",
+      });
+    } else if (email === 'student@example.com' && password === 'studentpassword') {
+      localStorage.setItem('user', 'student');
+      navigate('/student');
+      toast({
+        title: "เข้าสู่ระบบสำเร็จ",
+        description: "ยินดีต้อนรับ นักเรียน",
+      });
+    } else {
       toast({
         title: "เข้าสู่ระบบไม่สำเร็จ",
-        description: error.message,
+        description: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
         variant: "destructive",
       });
     }

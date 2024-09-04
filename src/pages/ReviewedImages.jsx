@@ -4,8 +4,12 @@ const ReviewedImages = () => {
   const [reviewedSubmissions, setReviewedSubmissions] = useState([]);
 
   useEffect(() => {
-    const storedSubmissions = JSON.parse(localStorage.getItem('reviewedSubmissions') || '[]');
-    setReviewedSubmissions(storedSubmissions);
+    // In a real application, you would fetch reviewed submissions from a backend here
+    // For now, we'll use mock data
+    setReviewedSubmissions([
+      { id: 1, studentName: 'นักเรียน A', image: '/placeholder.svg', description: 'เก็บขยะที่สวนสาธารณะ', date: '2023-03-15', score: 80 },
+      { id: 2, studentName: 'นักเรียน B', image: '/placeholder.svg', description: 'ช่วยเหลือผู้สูงอายุข้ามถนน', date: '2023-03-16', score: 90 },
+    ]);
   }, []);
 
   return (

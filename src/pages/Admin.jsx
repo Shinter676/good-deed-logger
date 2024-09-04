@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { auth, database } from '../firebase';
-import { ref, onValue, update } from 'firebase/database';
 
 const Admin = () => {
   const [pendingSubmissions, setPendingSubmissions] = useState([]);
@@ -12,20 +10,16 @@ const Admin = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user && user.email === 'admin@example.com') {
-        const submissionsRef = ref(database, 'submissions');
-        onValue(submissionsRef, (snapshot) => {
-          const data = snapshot.val();
-          const submissions = data ? Object.entries(data).map(([id, sub]) => ({...sub, id})).filter(sub => sub.score === 0) : [];
-          setPendingSubmissions(submissions);
-        });
-      } else {
-        navigate('/');
-      }
-    });
-
-    return () => unsubscribe();
+    const user = localStorage.getItem('user');
+    if (user !== 'admin') {
+      navigate('/login');
+    }
+    // In a real application, you would fetch pending submissions from a backend here
+    // For now, we'll use mock data
+    setPendingSubmissions([
+      { id: 1, studentEmail: 'student@example.com', image: '/placeholder.svg', description: 'เก็บขยะที่สวนสาธารณะ', score: 0 },
+      { id: 2, studentEmail: 'student2@example.com', image: '/placeholder.svg', description: 'ช่วยเหลือผู้สูงอายุข้ามถนน', score: 0 },
+    ]);
   }, [navigate]);
 
   const handleScoreChange = (id, score) => {
@@ -35,27 +29,13 @@ const Admin = () => {
   };
 
   const handleSubmitScores = () => {
-    const updates = {};
-    pendingSubmissions.forEach(sub => {
-      if (sub.score > 0) {
-        updates[`/submissions/${sub.id}/score`] = sub.score;
-      }
+    // In a real application, you would send the updated scores to a backend here
+    toast({
+      title: "บันทึกคะแนนสำเร็จ",
+      description: "คะแนนถูกบันทึกและอัพเดทในระบบแล้ว",
     });
-
-    update(ref(database), updates)
-      .then(() => {
-        toast({
-          title: "บันทึกคะแนนสำเร็จ",
-          description: "คะแนนถูกบันทึกและอัพเดทในฐานข้อมูลแล้ว",
-        });
-      })
-      .catch((error) => {
-        toast({
-          title: "เกิดข้อผิดพลาด",
-          description: "ไม่สามารถบันทึกคะแนนได้ กรุณาลองใหม่อีกครั้ง",
-          variant: "destructive",
-        });
-      });
+    // Remove scored submissions from the pending list
+    setPendingSubmissions(pendingSubmissions.filter(sub => sub.score === 0));
   };
 
   return (
