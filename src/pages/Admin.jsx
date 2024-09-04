@@ -23,9 +23,9 @@ const Admin = () => {
       navigate('/login');
       return;
     }
-    // Clear pending submissions
-    localStorage.removeItem('pendingSubmissions');
-    setPendingSubmissions([]);
+    // Load pending submissions from localStorage
+    const storedSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
+    setPendingSubmissions(storedSubmissions);
   }, [navigate]);
 
   const handleScoreChange = (id, score) => {
@@ -39,21 +39,24 @@ const Admin = () => {
     const remainingSubmissions = pendingSubmissions.filter(sub => sub.score === 0);
 
     // Update reviewedSubmissions in localStorage
-    localStorage.setItem('reviewedSubmissions', JSON.stringify(scoredSubmissions));
+    const existingReviewed = JSON.parse(localStorage.getItem('reviewedSubmissions')) || [];
+    const updatedReviewed = [...existingReviewed, ...scoredSubmissions];
+    localStorage.setItem('reviewedSubmissions', JSON.stringify(updatedReviewed));
 
     // Update pendingSubmissions in localStorage
     localStorage.setItem('pendingSubmissions', JSON.stringify(remainingSubmissions));
 
     // Update total scores
-    const totalScores = {};
+    const existingTotalScores = JSON.parse(localStorage.getItem('totalScores')) || {};
+    const updatedTotalScores = { ...existingTotalScores };
     scoredSubmissions.forEach(sub => {
-      if (totalScores[sub.userId]) {
-        totalScores[sub.userId] += sub.score;
+      if (updatedTotalScores[sub.userId]) {
+        updatedTotalScores[sub.userId] += sub.score;
       } else {
-        totalScores[sub.userId] = sub.score;
+        updatedTotalScores[sub.userId] = sub.score;
       }
     });
-    localStorage.setItem('totalScores', JSON.stringify(totalScores));
+    localStorage.setItem('totalScores', JSON.stringify(updatedTotalScores));
 
     setPendingSubmissions(remainingSubmissions);
     toast({
