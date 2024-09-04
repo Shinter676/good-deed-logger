@@ -19,7 +19,7 @@ const Login = ({ onLogin }) => {
         title: "เข้าสู่ระบบสำเร็จ",
         description: "ยินดีต้อนรับ แอดมิน",
       });
-    } else if (['test', 'Class 1/1', 'Class 1/2'].includes(username) && password === '123') {
+    } else if (['นักเรียน1', 'นักเรียน2', 'นักเรียน3'].includes(username) && password === '123') {
       onLogin({ username: username, role: 'student' });
       navigate('/student');
       toast({
@@ -60,7 +60,7 @@ const Login = ({ onLogin }) => {
         </form>
         <div className="text-sm text-gray-600">
           <p>แอดมิน: admin</p>
-          <p>นักเรียน: test, Class 1/1, Class 1/2</p>
+          <p>นักเรียน: นักเรียน1, นักเรียน2, นักเรียน3</p>
         </div>
       </div>
     </div>
