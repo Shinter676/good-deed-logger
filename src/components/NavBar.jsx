@@ -1,21 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 
 const NavBar = () => {
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-      setUser(storedUser);
-    }
-  }, []);
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    setUser(null);
     navigate('/login');
   };
 
@@ -38,9 +30,6 @@ const NavBar = () => {
               <li className="text-white">สวัสดี, {user.username}</li>
               <li><Button onClick={handleLogout} variant="outline" size="sm">ออกจากระบบ</Button></li>
             </>
-          )}
-          {!user && (
-            <li><Link to="/login" className="text-white hover:text-gray-300">เข้าสู่ระบบ</Link></li>
           )}
         </ul>
       </div>
