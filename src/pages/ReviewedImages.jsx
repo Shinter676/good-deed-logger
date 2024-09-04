@@ -1,4 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 const ReviewedImages = () => {
   const [reviewedSubmissions, setReviewedSubmissions] = useState([]);
@@ -11,15 +20,34 @@ const ReviewedImages = () => {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">ภาพที่ตรวจแล้ว</h2>
-      {reviewedSubmissions.map((submission) => (
-        <div key={submission.id} className="mb-6 p-4 border rounded">
-          <h3 className="text-xl font-semibold mb-2">{submission.studentEmail}</h3>
-          <img src={submission.image} alt="Reviewed Submission" className="mb-2 max-w-sm h-auto rounded" />
-          <p className="mb-2">{submission.description}</p>
-          <p>วันที่ส่ง: {new Date(submission.date).toLocaleDateString()}</p>
-          <p>คะแนน: {submission.score}</p>
-        </div>
-      ))}
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>ลำดับ</TableHead>
+            <TableHead>รูปภาพ</TableHead>
+            <TableHead>ชื่อเรื่อง</TableHead>
+            <TableHead>วันที่</TableHead>
+            <TableHead>คะแนน</TableHead>
+            <TableHead>ไฟล์ภาพประกอบ</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {reviewedSubmissions.map((submission, index) => (
+            <TableRow key={submission.id}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell>
+                <img src={submission.image} alt="Reviewed Submission" className="w-20 h-20 object-cover rounded" />
+              </TableCell>
+              <TableCell>{submission.description}</TableCell>
+              <TableCell>{new Date(submission.date).toLocaleDateString('th-TH')}</TableCell>
+              <TableCell>{submission.score}</TableCell>
+              <TableCell>
+                <Button variant="outline" size="sm">ดูภาพ</Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
       {reviewedSubmissions.length === 0 && (
         <p>ยังไม่มีภาพที่ตรวจแล้ว</p>
       )}
