@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { firestore, storage } from '../firebase';
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 
 const Student = () => {
   const [image, setImage] = useState(null);
@@ -19,11 +22,16 @@ const Student = () => {
       navigate('/login');
     } else {
       setUser(storedUser);
+      fetchPendingSubmissions(storedUser.username);
     }
-    // Load pending submissions from localStorage
-    const storedSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
-    setPendingSubmissions(storedSubmissions);
   }, [navigate]);
+
+  const fetchPendingSubmissions = async (userId) => {
+    const q = query(collection(firestore, "submissions"), where("userId", "==", userId), where("score", "==", 0));
+    const querySnapshot = await getDocs(q);
+    const submissions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setPendingSubmissions(submissions);
+  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -36,25 +44,39 @@ const Student = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (image && description && user) {
-      const newSubmission = {
-        id: Date.now(),
-        userId: user.username,
-        image,
-        description,
-        date: new Date().toISOString(),
-        score: 0
-      };
-      const updatedSubmissions = [...pendingSubmissions, newSubmission];
-      setPendingSubmissions(updatedSubmissions);
-      localStorage.setItem('pendingSubmissions', JSON.stringify(updatedSubmissions));
-      toast({
-        title: "อัพโหลดสำเร็จ",
-        description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
-      });
-      setImage(null);
-      setDescription('');
+      try {
+        // Upload image to Firebase Storage
+        const storageRef = ref(storage, `submissions/${Date.now()}`);
+        await uploadString(storageRef, image, 'data_url');
+        const imageUrl = await getDownloadURL(storageRef);
+
+        // Add submission to Firestore
+        const submissionRef = await addDoc(collection(firestore, "submissions"), {
+          userId: user.username,
+          image: imageUrl,
+          description,
+          date: new Date().toISOString(),
+          score: 0
+        });
+
+        toast({
+          title: "อัพโหลดสำเร็จ",
+          description: "รูปภาพและข้อความของคุณถูกส่งไปยังแอดมินเพื่อตรวจสอบแล้ว",
+        });
+
+        setImage(null);
+        setDescription('');
+        fetchPendingSubmissions(user.username);
+      } catch (error) {
+        console.error("Error submitting:", error);
+        toast({
+          title: "เกิดข้อผิดพลาด",
+          description: "ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง",
+          variant: "destructive",
+        });
+      }
     } else {
       toast({
         title: "เกิดข้อผิดพลาด",
