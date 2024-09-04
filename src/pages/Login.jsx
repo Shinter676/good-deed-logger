@@ -13,12 +13,18 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     if (username === 'admin' && password === '123') {
-      // บันทึกข้อมูลผู้ใช้ลงใน localStorage
       localStorage.setItem('user', JSON.stringify({ username: 'admin', role: 'admin' }));
       navigate('/admin');
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
         description: "ยินดีต้อนรับ Admin",
+      });
+    } else if (password === '123') { // สมมติว่าทุกผู้ใช้ใช้รหัสผ่าน 123
+      localStorage.setItem('user', JSON.stringify({ username: username, role: 'student' }));
+      navigate('/student');
+      toast({
+        title: "เข้าสู่ระบบสำเร็จ",
+        description: `ยินดีต้อนรับ ${username}`,
       });
     } else {
       toast({
