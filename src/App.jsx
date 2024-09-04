@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { app } from './firebase'; // เพิ่มการ import app จาก firebase
+import { app, database } from './firebase'; // เพิ่มการ import database
+import { ref, set, get } from 'firebase/database'; // เพิ่ม import สำหรับฟังก์ชัน Firebase Realtime Database
 import NavBar from './components/NavBar';
 import Index from './pages/Index';
 import Student from './pages/Student';
@@ -28,6 +29,24 @@ function App() {
     if (app) {
       console.log('Firebase initialized successfully');
       setFirebaseInitialized(true);
+
+      // ทดสอบการเขียนและอ่านข้อมูล
+      const testRef = ref(database, 'test');
+      set(testRef, { message: 'Test connection' })
+        .then(() => {
+          console.log('Test data written successfully');
+          return get(testRef);
+        })
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            console.log('Test data read successfully:', snapshot.val());
+          } else {
+            console.log('No test data available');
+          }
+        })
+        .catch((error) => {
+          console.error('Error testing Firebase connection:', error);
+        });
     } else {
       console.error('Firebase initialization failed');
     }
