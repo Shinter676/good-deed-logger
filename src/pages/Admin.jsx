@@ -15,7 +15,6 @@ const Admin = () => {
       navigate('/login');
       return;
     }
-    // Load pending submissions from localStorage
     const savedSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
     setPendingSubmissions(savedSubmissions);
   }, [navigate]);
@@ -27,16 +26,33 @@ const Admin = () => {
   };
 
   const handleSubmitScores = () => {
-    // Update localStorage with scored submissions
-    localStorage.setItem('pendingSubmissions', JSON.stringify(pendingSubmissions));
+    const scoredSubmissions = pendingSubmissions.filter(sub => sub.score > 0);
+    const remainingSubmissions = pendingSubmissions.filter(sub => sub.score === 0);
+
+    // Update reviewedSubmissions in localStorage
+    const existingReviewedSubmissions = JSON.parse(localStorage.getItem('reviewedSubmissions')) || [];
+    const updatedReviewedSubmissions = [...existingReviewedSubmissions, ...scoredSubmissions];
+    localStorage.setItem('reviewedSubmissions', JSON.stringify(updatedReviewedSubmissions));
+
+    // Update pendingSubmissions in localStorage
+    localStorage.setItem('pendingSubmissions', JSON.stringify(remainingSubmissions));
+
+    // Update total scores
+    const totalScores = {};
+    updatedReviewedSubmissions.forEach(sub => {
+      if (totalScores[sub.studentEmail]) {
+        totalScores[sub.studentEmail] += sub.score;
+      } else {
+        totalScores[sub.studentEmail] = sub.score;
+      }
+    });
+    localStorage.setItem('totalScores', JSON.stringify(totalScores));
+
+    setPendingSubmissions(remainingSubmissions);
     toast({
       title: "บันทึกคะแนนสำเร็จ",
       description: "คะแนนถูกบันทึกและอัพเดทในระบบแล้ว",
     });
-    // Remove scored submissions from the pending list
-    const unscored = pendingSubmissions.filter(sub => sub.score === 0);
-    setPendingSubmissions(unscored);
-    localStorage.setItem('pendingSubmissions', JSON.stringify(unscored));
   };
 
   return (
@@ -64,6 +80,9 @@ const Admin = () => {
         ))}
         {pendingSubmissions.length > 0 && (
           <Button onClick={handleSubmitScores}>บันทึกคะแนน</Button>
+        )}
+        {pendingSubmissions.length === 0 && (
+          <p>ไม่มีภาพรอการตรวจ</p>
         )}
       </div>
     </div>

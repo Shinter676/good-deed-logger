@@ -4,16 +4,8 @@ const TotalScore = () => {
   const [scores, setScores] = useState({});
 
   useEffect(() => {
-    const pendingSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
-    const scoredSubmissions = pendingSubmissions.filter(sub => sub.score > 0);
-    
-    const totalScores = scoredSubmissions.reduce((acc, sub) => {
-      const email = sub.studentEmail || 'Unknown';
-      acc[email] = (acc[email] || 0) + sub.score;
-      return acc;
-    }, {});
-
-    setScores(totalScores);
+    const savedTotalScores = JSON.parse(localStorage.getItem('totalScores')) || {};
+    setScores(savedTotalScores);
   }, []);
 
   return (
