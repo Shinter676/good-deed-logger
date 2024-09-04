@@ -20,4 +20,7 @@ const firestore = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
 
-export { app, database, firestore, storage, auth };
+// Specify the file for Realtime Database Security Rules
+const databaseRulesFile = 'database.rules.json';
+
+export { app, database, firestore, storage, auth, databaseRulesFile };
