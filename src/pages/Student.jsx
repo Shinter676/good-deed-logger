@@ -20,9 +20,9 @@ const Student = () => {
     } else {
       setUser(storedUser);
     }
-    // Clear pending submissions
-    localStorage.removeItem('pendingSubmissions');
-    setPendingSubmissions([]);
+    // Load pending submissions from localStorage
+    const storedSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
+    setPendingSubmissions(storedSubmissions);
   }, [navigate]);
 
   const handleImageUpload = (e) => {
