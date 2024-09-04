@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 
-const Login = () => {
+const Login = ({ setUser }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -13,21 +13,26 @@ const Login = () => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
+      setUser(user);
       navigate('/');
     }
-  }, [navigate]);
+  }, [navigate, setUser]);
 
   const handleLogin = (e) => {
     e.preventDefault();
     if (username === 'admin' && password === '123') {
-      localStorage.setItem('user', JSON.stringify({ username: 'admin', role: 'admin' }));
+      const user = { username: 'admin', role: 'admin' };
+      localStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
       navigate('/');
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
         description: "ยินดีต้อนรับ Admin",
       });
     } else if (password === '123') { // สมมติว่าทุกผู้ใช้ใช้รหัสผ่าน 123
-      localStorage.setItem('user', JSON.stringify({ username: username, role: 'student' }));
+      const user = { username: username, role: 'student' };
+      localStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
       navigate('/');
       toast({
         title: "เข้าสู่ระบบสำเร็จ",
