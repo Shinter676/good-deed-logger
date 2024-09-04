@@ -53,13 +53,15 @@ const Student = () => {
         const imageUrl = await getDownloadURL(storageRef);
 
         // Add submission to Firestore
-        await addDoc(submissionsCollection, {
+        const submissionData = {
           userId: user.username,
           image: imageUrl,
           description,
           date: new Date(),
           score: 0
-        });
+        };
+
+        const docRef = await addDoc(submissionsCollection, submissionData);
 
         toast({
           title: "อัพโหลดสำเร็จ",
