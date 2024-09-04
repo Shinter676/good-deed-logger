@@ -20,9 +20,9 @@ const Student = () => {
     } else {
       setUser(storedUser);
     }
-    // Load pending submissions from localStorage
-    const savedSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
-    setPendingSubmissions(savedSubmissions);
+    // Clear pending submissions
+    localStorage.removeItem('pendingSubmissions');
+    setPendingSubmissions([]);
   }, [navigate]);
 
   const handleImageUpload = (e) => {
@@ -48,7 +48,6 @@ const Student = () => {
       };
       const updatedSubmissions = [...pendingSubmissions, newSubmission];
       setPendingSubmissions(updatedSubmissions);
-      // Save to localStorage
       localStorage.setItem('pendingSubmissions', JSON.stringify(updatedSubmissions));
       toast({
         title: "อัพโหลดสำเร็จ",

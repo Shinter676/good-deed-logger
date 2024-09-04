@@ -12,8 +12,9 @@ const TotalScore = () => {
   const [scores, setScores] = useState({});
 
   useEffect(() => {
-    const savedTotalScores = JSON.parse(localStorage.getItem('totalScores')) || {};
-    setScores(savedTotalScores);
+    // Clear total scores
+    localStorage.removeItem('totalScores');
+    setScores({});
   }, []);
 
   return (

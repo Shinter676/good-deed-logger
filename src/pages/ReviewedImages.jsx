@@ -12,8 +12,9 @@ const ReviewedImages = () => {
   const [reviewedSubmissions, setReviewedSubmissions] = useState([]);
 
   useEffect(() => {
-    const savedReviewedSubmissions = JSON.parse(localStorage.getItem('reviewedSubmissions')) || [];
-    setReviewedSubmissions(savedReviewedSubmissions);
+    // Clear reviewed submissions
+    localStorage.removeItem('reviewedSubmissions');
+    setReviewedSubmissions([]);
   }, []);
 
   return (

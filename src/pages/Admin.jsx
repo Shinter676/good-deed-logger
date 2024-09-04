@@ -23,8 +23,9 @@ const Admin = () => {
       navigate('/login');
       return;
     }
-    const savedSubmissions = JSON.parse(localStorage.getItem('pendingSubmissions')) || [];
-    setPendingSubmissions(savedSubmissions);
+    // Clear pending submissions
+    localStorage.removeItem('pendingSubmissions');
+    setPendingSubmissions([]);
   }, [navigate]);
 
   const handleScoreChange = (id, score) => {
@@ -38,16 +39,14 @@ const Admin = () => {
     const remainingSubmissions = pendingSubmissions.filter(sub => sub.score === 0);
 
     // Update reviewedSubmissions in localStorage
-    const existingReviewedSubmissions = JSON.parse(localStorage.getItem('reviewedSubmissions')) || [];
-    const updatedReviewedSubmissions = [...existingReviewedSubmissions, ...scoredSubmissions];
-    localStorage.setItem('reviewedSubmissions', JSON.stringify(updatedReviewedSubmissions));
+    localStorage.setItem('reviewedSubmissions', JSON.stringify(scoredSubmissions));
 
     // Update pendingSubmissions in localStorage
     localStorage.setItem('pendingSubmissions', JSON.stringify(remainingSubmissions));
 
     // Update total scores
     const totalScores = {};
-    updatedReviewedSubmissions.forEach(sub => {
+    scoredSubmissions.forEach(sub => {
       if (totalScores[sub.userId]) {
         totalScores[sub.userId] += sub.score;
       } else {
