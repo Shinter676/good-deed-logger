@@ -30,6 +30,9 @@ const NavBar = ({ user, onLogout }) => {
               <li><Button onClick={handleLogout} variant="outline" size="sm">ออกจากระบบ</Button></li>
             </>
           )}
+          {!user && (
+            <li><Link to="/login" className="text-white hover:text-gray-300">เข้าสู่ระบบ</Link></li>
+          )}
         </ul>
       </div>
     </nav>

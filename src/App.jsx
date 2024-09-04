@@ -14,7 +14,12 @@ function App() {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('user');
+      }
     }
   }, []);
 
@@ -34,7 +39,7 @@ function App() {
         <NavBar user={user} onLogout={handleLogout} />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/student" element={user ? <Student /> : <Navigate to="/login" />} />
+          <Route path="/student" element={user && user.role === 'student' ? <Student /> : <Navigate to="/login" />} />
           <Route path="/admin" element={user && user.role === 'admin' ? <Admin /> : <Navigate to="/login" />} />
           <Route path="/reviewed-images" element={user ? <ReviewedImages /> : <Navigate to="/login" />} />
           <Route path="/total-score" element={user ? <TotalScore /> : <Navigate to="/login" />} />
