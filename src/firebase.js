@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
+import { getDatabase } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDhiu77FtCcM8zgDbZ7Ntn3ZpQfz646EJU",
@@ -17,9 +18,10 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
+const database = getDatabase(app);
 
 // กำหนด Collection
 const submissionsCollection = collection(db, 'submissions');
 const usersCollection = collection(db, 'users');
 
-export { app, db, storage, auth, submissionsCollection, usersCollection };
+export { app, db, storage, auth, database, submissionsCollection, usersCollection };
