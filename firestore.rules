@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // อนุญาตให้อ่านข้อมูลได้ทุกคน แต่การเขียนต้องล็อกอินก่อน
+    match /{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // กฎสำหรับคอลเลกชัน submissions
+    match /submissions/{submissionId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && request.auth.token.role == 'admin';
+    }
+    
+    // กฎสำหรับคอลเลกชัน users
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
