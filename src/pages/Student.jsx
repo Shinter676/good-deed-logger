@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { firestore, storage } from '../firebase';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { db, storage, submissionsCollection } from '../firebase';
+import { addDoc, query, where, getDocs } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 
 const Student = () => {
@@ -27,7 +27,7 @@ const Student = () => {
   }, [navigate]);
 
   const fetchPendingSubmissions = async (userId) => {
-    const q = query(collection(firestore, "submissions"), where("userId", "==", userId), where("score", "==", 0));
+    const q = query(submissionsCollection, where("userId", "==", userId), where("score", "==", 0));
     const querySnapshot = await getDocs(q);
     const submissions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setPendingSubmissions(submissions);
@@ -53,11 +53,11 @@ const Student = () => {
         const imageUrl = await getDownloadURL(storageRef);
 
         // Add submission to Firestore
-        const submissionRef = await addDoc(collection(firestore, "submissions"), {
+        await addDoc(submissionsCollection, {
           userId: user.username,
           image: imageUrl,
           description,
-          date: new Date().toISOString(),
+          date: new Date(),
           score: 0
         });
 
@@ -106,7 +106,7 @@ const Student = () => {
         <div key={submission.id} className="mb-6 p-4 border rounded">
           <img src={submission.image} alt="Submission" className="mb-2 max-w-sm h-auto rounded" />
           <p className="mb-2">{submission.description}</p>
-          <p>วันที่ส่ง: {new Date(submission.date).toLocaleDateString()}</p>
+          <p>วันที่ส่ง: {submission.date.toDate().toLocaleDateString()}</p>
         </div>
       ))}
     </div>
