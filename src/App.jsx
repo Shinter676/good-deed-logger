@@ -23,7 +23,7 @@ function App() {
     <div className="App">
       {user && <NavBar />}
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login setUser={setUser} />} />
+        <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/" element={user ? <Index /> : <Navigate to="/login" />} />
         <Route path="/student" element={user && user.role === 'student' ? <Student /> : <Navigate to="/" />} />
         <Route path="/admin" element={user && user.role === 'admin' ? <Admin /> : <Navigate to="/" />} />
