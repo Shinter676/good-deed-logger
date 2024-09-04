@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 
 const ReviewedImages = () => {
   const [reviewedSubmissions, setReviewedSubmissions] = useState([]);
@@ -28,7 +27,6 @@ const ReviewedImages = () => {
             <TableHead>ชื่อเรื่อง</TableHead>
             <TableHead>วันที่</TableHead>
             <TableHead>คะแนน</TableHead>
-            <TableHead>ไฟล์ภาพประกอบ</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -41,9 +39,6 @@ const ReviewedImages = () => {
               <TableCell>{submission.description}</TableCell>
               <TableCell>{new Date(submission.date).toLocaleDateString('th-TH')}</TableCell>
               <TableCell>{submission.score}</TableCell>
-              <TableCell>
-                <Button variant="outline" size="sm">ดูภาพ</Button>
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>
