@@ -59,10 +59,10 @@ const Login = ({ onLogin }) => {
           <Button type="submit" className="w-full mb-4">เข้าสู่ระบบ</Button>
         </form>
         <div className="text-sm text-gray-600">
-          <p>แอดมิน: admin / 123</p>
-          <p>นักเรียน: test / 123</p>
-          <p>Class 1/1: Class 1/1 / 123</p>
-          <p>Class 1/2: Class 1/2 / 123</p>
+          <p>แอดมิน: admin</p>
+          <p>นักเรียน: test</p>
+          <p>Class 1/1: Class 1/1</p>
+          <p>Class 1/2: Class 1/2</p>
         </div>
       </div>
     </div>
